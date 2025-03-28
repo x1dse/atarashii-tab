@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import NProgress from "nprogress/nprogress.js"
 
-const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
+//By simply installing a cors extension, you avoid this problem.
 
 export default ({ src, ...props }) => {
   const [loadedSrc, setLoadedSrc] = useState(null)
@@ -12,9 +12,8 @@ export default ({ src, ...props }) => {
     
     if (!src) return;
     
-    const proxySrc = `${PROXY_URL}${src}`;
     const xmlHTTP = new XMLHttpRequest();
-    xmlHTTP.open("GET", proxySrc, true);
+    xmlHTTP.open("GET", src, true);
     xmlHTTP.responseType = "arraybuffer";
     
     xmlHTTP.onerror = () => {

@@ -59,6 +59,7 @@ module.exports = {
       {
         test: /\.m?js$/,
         include: path.resolve(__dirname, "src"),
+        exclude: path.resolve(__dirname, "src", "utils"),
         use: {
           loader: "babel-loader",
           options: {
