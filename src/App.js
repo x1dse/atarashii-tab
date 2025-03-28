@@ -23,7 +23,7 @@ export default () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [config, setConfig] = useLocalStorage("config", {
     num: null,
-    q: `flair:"Desktop"`,
+    q: "Desktop",
     sort: "top",
     t: "year",
     nsfw: false,
