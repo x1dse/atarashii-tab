@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { decode } from "html-entities"
 import { FaReddit, FaSadTear, FaHeart } from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
@@ -30,113 +30,155 @@ export default () => {
     theme: {
       primary: "#ffc400",
     },
+    hideGui: false,
   })
 
   const [cache, setCache] = useLocalStorage("cache", {
     lastUpdated: -1,
     data: [],
   })
+  
+  const themeStyle = useMemo(() => ({
+    "--primary": config.theme.primary,
+  }), [config.theme.primary]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--primary",
-      config.theme.primary
-    )
-  }, [config])
+    for (const property in themeStyle) {
+      document.documentElement.style.setProperty(property, themeStyle[property]);
+    }
+  }, [themeStyle]);
 
   useEffect(() => {
-    if (loaded || config.incognito) return
+    if (!loaded) return;
+    const bgElement = document.querySelector('.bg');
+    if (!bgElement) {
+      console.warn("[!] Background element (.bg) not found.");
+      return;
+    }
+    bgElement.style.objectFit = 'cover';
+    const handleKeyDown = (event) => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        bgElement.style.objectFit = 
+          bgElement.style.objectFit === 'cover' ? 'contain' : 'cover';
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [loaded]);
 
-    console.log("[i] Fetching w/ config:", config)
+  const fetchData = useCallback(async () => {
+    const CACHE_EXPIRY = 1000 * 60 * 60 * 24
+    let posts = []
+    const isCacheValid = cache.lastUpdated !== -1 && (config.num !== null || Date.now() - cache.lastUpdated < CACHE_EXPIRY)
 
-    async function run() {
-      let posts = []
+    if (isCacheValid) {
+      console.log("[i] Using cached posts")
+      posts = cache.data
+    } else {
+      console.log("[i] Fetching w/ config:", config)
 
-      // Cache for 24 hours, also never refresh cache if pinned
-      // If (never cached OR (not pinned AND cache expired))
-      if (
-        cache.lastUpdated === -1 ||
-        (config.num === null &&
-          Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24)
-      ) {
-        let after = null
+      let after = null
+      const allPosts = []
 
-        while (posts.length < 200) {
-          const query = new URLSearchParams({
-            q: config.q,
-            sort: config.sort,
-            t: config.t,
-            show: "all",
-            restrict_sr: 1,
-            include_over_18: config.nsfw && "on",
-            after,
-          })
+      while (allPosts.length < 200) {
+        const query = new URLSearchParams({
+          q: config.q,
+          sort: config.sort,
+          t: config.t,
+          show: "all",
+          restrict_sr: 1,
+          include_over_18: config.nsfw ? "on" : undefined,
+          after,
+        })
 
-          const res = await fetch(
-            `https://www.reddit.com/r/Animewallpaper/search.json?${query}`
-          )
+        const subr = config.nsfw ? "AnimewallpaperNSFW" : "Animewallpaper"
+        //url = `https://www.reddit.com/r/${subr}/search.json?${query}` broken
+        let url = `https://www.reddit.com/r/${subr}/.json?${query}`
+
+        try {
+          const res = await fetch(url)
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`)
+          }
           const json = await res.json()
 
           after = json.data.after
           if (!after) break
 
-          posts = posts.concat(json.data.children)
+          const newPosts = json.data.children.map((e) => e.data)
+          allPosts.push(...newPosts)
+        } catch (error) {
+          console.error("Error fetching data:", error)
+          setData(null)
+          setLoaded(true)
+          return
         }
-
-        // Collect posts w/ i.redd.it only
-        posts = posts.map((e) => e.data)
-
-        // Filter by NSFW if enabled
-        if (config.nsfw) posts = posts.filter((e) => e.thumbnail === "nsfw")
-
-        posts = posts.filter((e) => e.url.includes("i.redd.it"))
-
-        setCache({ lastUpdated: Date.now(), data: posts })
-      } else {
-        console.log("[i] Using cached posts")
-        posts = cache.data
       }
 
-      if (!posts.length) {
-        setData(null)
-        setLoaded(true)
-        return
-      }
+      posts = allPosts
+        .filter((e) => config.nsfw || e.thumbnail !== "nsfw")
+        .filter((e) => e.url.includes("i.redd.it"))
 
-      const num = config.num || Math.floor(Math.random() * posts.length)
-      const post = posts[num]
-      const link = `https://redd.it/${post.id}`
-
-      console.log("[i] Loading post:", post)
-
-      const rawTitle = decode(post.title)
-
-      const parts = rawTitle
-        .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
-        .filter((e) => !!e)
-        .map((e) => e.slice(1, -1))
-      const title = rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, "").trim()
-
-      let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
-
-      if (resolution) {
-        parts.splice(parts.indexOf(resolution), 1)
-        resolution = resolution.split(/[x×*]/).join(" × ")
-      }
-
-      if (title) parts.unshift(title)
-
-      setData({
-        title: parts.join(" • "),
-        res: resolution || "",
-        url: post.url,
-        link,
-        num,
-      })
+      setCache({ lastUpdated: Date.now(), data: posts })
     }
 
-    run()
-  }, [config.incognito, loaded])
+    if (!posts.length) {
+      setData(null)
+      setLoaded(true)
+      return
+    }
+
+    const num = config.num || Math.floor(Math.random() * posts.length)
+    const post = posts[num]
+    const link = `https://redd.it/${post.id}`
+
+    console.log("[i] Loading post:", post)
+
+    const rawTitle = decode(post.title)
+
+    const matchedTags = rawTitle.match(/\[.*?\]|\(.*?\)|\{.*?\}/g);
+    let parts = [];
+    let title = rawTitle;
+
+    if (matchedTags) {
+      parts = matchedTags
+        .map(tag => tag.slice(1, -1).trim())
+        .filter(part => part);
+
+      title = rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, "").trim();
+    } else if (title.toLowerCase().includes("remove")) {
+      title = ""
+    }
+
+    let resolution = parts.find((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))
+
+    if (resolution) {
+      parts.splice(parts.indexOf(resolution), 1)
+      resolution = resolution.split(/[x×*]/).join(" × ")
+    }
+
+    const processedTitle = title ? [title, ...parts].join(" • ") : parts.join(" • ")
+
+    setData({
+      title: processedTitle,
+      res: resolution || "",
+      url: post.url,
+      link,
+      num,
+    })
+
+    setLoaded(true)
+  }, [config, cache, setCache, setData, setLoaded])
+
+  useEffect(() => {
+    if (loaded || config.incognito) return
+
+    setLoaded(false)
+    fetchData()
+  }, [config.incognito, loaded, fetchData])
 
   return (
     <AppContext.Provider

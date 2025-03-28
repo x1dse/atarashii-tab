@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "react-dom"
+import { createRoot } from "react-dom/client"
 import NProgress from 'nprogress/nprogress'
 
 import "normalize.css"
@@ -16,7 +16,8 @@ import App from './App'
 window.addEventListener('load', () => {
   document.body.classList.remove('preload')
 
-  // Render after window load to prevent instant img loading
-  render(<App />, document.getElementById("root"))
+  // Create root and render after window load
+  const container = document.getElementById('root')
+  const root = createRoot(container)
+  root.render(<App />)
 })
-

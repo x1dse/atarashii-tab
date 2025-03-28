@@ -107,15 +107,32 @@ export default () => {
     <div className="config">
       <ValuePicker
         valueKey="sort"
-        values={["relevance", "hot", "top", "new"]}
+        values={["relevance", "hot", "top", "new", "best", "rising"]}
       />
 
       {config.sort !== "new" && (
         <ValuePicker
           valueKey="t"
-          values={["hour", "day", "week", "month", "year", "all"]}
+          values={[
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all",
+          ]}
         />
       )}
+
+      <ValuePicker
+        valueKey="q"
+        values={[
+          `All`,
+          `flair:"Desktop"`,
+          `flair:"Mobile"`,
+          `flair:"Wallpaper"`
+        ]}
+      />
 
       <span className="buttons">
         <div
@@ -172,6 +189,13 @@ export default () => {
           {!config.hideGui ? "hide" : "show"} gui
           {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
         </div>
+        {/*<div
+          className={"button" + (config.lockPosition ? " active" : "")}
+          onClick={() => toggle("lockPosition")}
+        >
+          lock position
+          <FaCog size={16} />
+        </div>*/}
       </span>
 
       {/* <span>

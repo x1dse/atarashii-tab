@@ -52,6 +52,8 @@ export default ({ open, setOpen, config, setConfig }) => {
             <option value="hot">Hot</option>
             <option value="top">Top</option>
             <option value="new">New</option>
+            <option value="best">Best</option>
+            <option value="rising">Rising</option>
             <option value="comments">Comments</option>
           </select>
         </label>
