@@ -126,7 +126,7 @@ export default () => {
       }
 
       posts = allPosts
-        .filter((e) => config.nsfw || e.thumbnail !== "nsfw")
+        .filter((e) => config.nsfw || !e.over_18)
         .filter((e) => e.url.includes("i.redd.it"))
 
       setCache({ lastUpdated: Date.now(), data: posts })
@@ -175,6 +175,7 @@ export default () => {
       url: post.url,
       link,
       num,
+      isNsfw: post.over_18,
     })
 
     setLoaded(true)
@@ -233,8 +234,9 @@ export default () => {
                 ) : (
                   <>
                     Image from{" "}
-                    <a href="https://reddit.com/r/animewallpaper">
-                      <FaReddit size={20} /> r/Animewallpaper
+                    <a href={data?.isNsfw ? "https://reddit.com/r/AnimeWallpaperNSFW" : "https://reddit.com/r/Animewallpaper"}>
+                      {data?.isNsfw ? undefined : <FaReddit size={20} />}
+                      r/{data?.isNsfw ? "AnimeWallpaperNSFW" : "Animewallpaper"}
                     </a>
                   </>
                 )}

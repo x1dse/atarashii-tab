@@ -7,6 +7,9 @@ export default ({ src, ...props }) => {
   const [loadedSrc, setLoadedSrc] = useState(null)
   
   useEffect(() => {
+    // Reset loadedSrc when src changes to ensure fresh load
+    setLoadedSrc(null)
+    
     if (!src) return;
     
     const proxySrc = `${PROXY_URL}${src}`;
@@ -49,6 +52,10 @@ export default ({ src, ...props }) => {
     
     return () => {
       xmlHTTP.abort();
+      // Clean up the object URL if it exists
+      if (loadedSrc) {
+        window.URL.revokeObjectURL(loadedSrc);
+      }
     };
   }, [src]);
   
