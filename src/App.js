@@ -96,7 +96,14 @@ export default () => {
 
         const subr = config.nsfw ? "AnimewallpaperNSFW" : "Animewallpaper"
         //url = `https://www.reddit.com/r/${subr}/search.json?${query}` broken
-        let url = `https://www.reddit.com/r/${subr}/.json?${query}`
+        let url
+
+        if (config.q.includes("All")) {
+          query.delete("q")
+          url = `https://www.reddit.com/r/${subr}/.json?${query}`
+        } else {
+          url = `https://www.reddit.com/r/${subr}/search.json?${query}`
+        }
 
         try {
           const res = await fetch(url)
