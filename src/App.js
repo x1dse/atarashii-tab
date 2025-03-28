@@ -4,7 +4,7 @@ import { FaReddit, FaSadTear, FaHeart } from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
 
 import useLocalStorage from "./hooks/useLocalStorage"
-
+import { ToastContainer } from 'react-toastify';
 import TimeDate from "./components/TimeDate"
 import Config from "./components/Config"
 import Icons from "./components/Icons"
@@ -294,6 +294,7 @@ export default () => {
           />
         )}
       </div>
+      <ToastContainer />
     </AppContext.Provider>
   )
 }

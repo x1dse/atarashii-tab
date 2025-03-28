@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import NProgress from "nprogress/nprogress.js"
+import { toast } from 'react-toastify';
 
 //By simply installing a cors extension, you avoid this problem.
 
@@ -19,9 +20,19 @@ export default ({ src, ...props }) => {
     xmlHTTP.onerror = () => {
       console.error("Error loading image:", src);
       NProgress.done();
+      toast.error(
+        "Error loading image due to CORS. Please install a CORS extension.",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
     };
     
-    xmlHTTP.timeout = 10000;
+    xmlHTTP.timeout = 30000;
     xmlHTTP.ontimeout = () => {
       console.warn("Timeout loading image:", src);
       NProgress.done();
