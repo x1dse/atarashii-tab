@@ -11,7 +11,7 @@ import Icons from "./components/Icons"
 import Image from "./components/Image"
 
 import AppContext from "./contexts/AppContext"
-
+import Gallery from "./components/Gallery";
 import pkg from "../package.json"
 
 import "./App.scss"
@@ -37,6 +37,9 @@ export default () => {
     lastUpdated: -1,
     data: [],
   })
+
+  const [galleryItems, setGalleryItems] = useLocalStorage("galleryItems", []);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   
   const themeStyle = useMemo(() => ({
     "--primary": config.theme.primary,
@@ -47,6 +50,52 @@ export default () => {
       document.documentElement.style.setProperty(property, themeStyle[property]);
     }
   }, [themeStyle]);
+
+  const handleSaveToGallery = useCallback(() => {
+    if (!data || data.source === 'gallery' || config.incognito) return;
+
+    const alreadyExists = galleryItems.some(item => item.url === data.url);
+    if (!alreadyExists) {
+      const simpleHash = (str) => str.split('').reduce((h, c) => h + c.charCodeAt(), 0).toString(16).slice(0, 5);
+      const galleryItem = {
+        id: simpleHash(data.url),
+        url: data.url,
+        title: data.title,
+        res: data.res,
+        link: data.link,
+        isNsfw: data.isNsfw,
+      };
+      setGalleryItems(prevItems => [...prevItems, galleryItem]);
+      console.log("[+] Saved to gallery:", galleryItem.url);
+    } else {
+       console.log("[i] Item already in gallery:", data.url);
+    }
+  }, [data, galleryItems, setGalleryItems, config.incognito]);
+
+  const handleRemoveFromGallery = useCallback((urlToRemove) => {
+    setGalleryItems(prevItems => prevItems.filter(item => item.url !== urlToRemove));
+    console.log("[-] Removed from gallery:", urlToRemove);
+    if (data?.url === urlToRemove) {
+      setConfig(prev => ({...prev, num: null}));
+      setLoaded(false);
+    }
+  }, [setGalleryItems, data?.url, setConfig]);
+
+  const handleUseFromGallery = useCallback((item) => {
+    console.log("[i] Using from gallery:", item.url);
+    setData({
+      ...item,
+      source: 'gallery',
+      num: -1,
+    });
+    setConfig(prev => ({ ...prev, num: `gallery_${item.id}` }));
+    setLoaded(true);
+    setIsGalleryOpen(false);
+  }, [setData, setConfig, setLoaded, setIsGalleryOpen]);
+
+  const getGalleryItem = useCallback((itemId) => {
+    return galleryItems.find(item => item?.id === itemId) ?? null;
+  }, [galleryItems]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -70,9 +119,10 @@ export default () => {
   }, [loaded]);
 
   const fetchData = useCallback(async () => {
+    const isFetchNeeded = config.num === null || typeof config.num === 'number';
     const CACHE_EXPIRY = 1000 * 60 * 60 * 24
     let posts = []
-    const isCacheValid = cache.lastUpdated !== -1 && (config.num !== null || Date.now() - cache.lastUpdated < CACHE_EXPIRY)
+    const isCacheValid = cache.lastUpdated !== -1 && (!isFetchNeeded || Date.now() - cache.lastUpdated < CACHE_EXPIRY)
 
     if (isCacheValid) {
       console.log("[i] Using cached posts")
@@ -139,6 +189,12 @@ export default () => {
     }
 
     const num = config.num || Math.floor(Math.random() * posts.length)
+    if (typeof config.num === "string" && config.num.includes("gallery_")) {
+      const data = getGalleryItem(num.replace("gallery_", ""))
+      setData(data)
+      setLoaded(true)
+      return
+    }
     const post = posts[num]
     const link = `https://redd.it/${post.id}`
 
@@ -212,6 +268,11 @@ export default () => {
         setConfig,
         loaded,
         setLoaded,
+        galleryItems, setGalleryItems,
+        isGalleryOpen, setIsGalleryOpen,
+        handleSaveToGallery,
+        handleRemoveFromGallery,
+        handleUseFromGallery,
       }}
     >
       <div
@@ -284,7 +345,6 @@ export default () => {
             </div>
           </footer>
         </div>
-
         {data === null ? null : (
           <Image
             className="bg to-load-bg"
@@ -295,6 +355,10 @@ export default () => {
         )}
       </div>
       <ToastContainer />
+      <Gallery
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+      />
     </AppContext.Provider>
   )
 }

@@ -1,0 +1,190 @@
+// Import the same font as the Gallery for consistency
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+// Reuse variables from Gallery for consistency
+$night-bg: #1a1a2e; // Deep navy blue
+$card-bg: #252540; // Slightly lighter for contrast
+$neon-accent: #00d4ff; // Cyan neon
+$neon-secondary: #ff007a; // Pink neon
+$text-color: #e0e0e0; // Light gray
+$shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
+
+// Gallery Card
+.gallery-card {
+  background: $card-bg;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-glow, 0 6px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  &.blurred {
+    .gallery-card-image-wrapper img {
+      filter: blur(10px);
+    }
+  }
+}
+
+// Image Wrapper
+.gallery-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px; // Fixed height for uniformity
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // Ensures images fill space without distortion
+    transition: filter 0.3s ease;
+  }
+
+  .blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: $text-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px $neon-secondary;
+  }
+
+  .gallery-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $night-bg;
+    color: $text-color;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    text-align: center;
+    padding: 10px;
+
+    &.error {
+      background: #4a1a1a; // Dark red for error
+      color: #ff6666; // Light red text
+    }
+  }
+}
+
+// Card Content
+.gallery-card-content {
+  padding: 10px;
+  color: $text-color;
+  font-family: 'Poppins', sans-serif;
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .card-res {
+    font-size: 0.85rem;
+    color: #b0b0b0; // Slightly dimmer for secondary info
+    margin: 0 0 5px;
+  }
+
+  .card-link {
+    margin: 0;
+
+    a {
+      color: $neon-accent;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $neon-secondary;
+        text-shadow: 0 0 5px $neon-secondary;
+      }
+    }
+  }
+}
+
+// Card Actions
+.gallery-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3); // Slightly darker overlay for buttons
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  button {
+    background: $night-bg;
+    border: 1px solid $neon-accent;
+    border-radius: 5px;
+    color: $text-color;
+    padding: 5px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $neon-accent;
+      color: $night-bg;
+      box-shadow: 0 0 8px $neon-accent;
+    }
+
+    &.remove-button {
+      border-color: $neon-secondary;
+
+      &:hover {
+        background: $neon-secondary;
+        color: $night-bg;
+        box-shadow: 0 0 8px $neon-secondary;
+      }
+    }
+
+    svg {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .gallery-card {
+    .gallery-card-image-wrapper {
+      height: 150px; // Smaller images on mobile
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+    }
+
+    .gallery-card-actions {
+      flex-wrap: wrap;
+      gap: 5px;
+
+      button {
+        flex: 1 1 45%; // Buttons take half width on small screens
+        font-size: 0.85rem;
+        padding: 5px;
+      }
+    }
+  }
+}

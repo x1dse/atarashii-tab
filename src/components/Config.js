@@ -7,6 +7,8 @@ import {
   FaEye,
   FaEyeSlash,
   FaUserSecret,
+  FaSave,
+  FaImages,
 } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
@@ -62,7 +64,7 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  const { config, setLoaded, setCache, setConfig, data } =
+  const { config, setLoaded, setCache, setConfig, data , handleSaveToGallery, setIsGalleryOpen, galleryItems } =
     useContext(AppContext)
 
   const toggle = (key) => {
@@ -94,6 +96,8 @@ export default () => {
       else if (config.incognito) return
       else if (e.code === "KeyR" && config.num === null) setLoaded(false)
       else if (e.code === "KeyP") togglePin()
+      else if (e.code === "KeyS") handleSaveToGallery();
+      else if (e.code === "KeyO") setIsGalleryOpen(true);
     }
 
     document.addEventListener("keydown", action)
@@ -101,7 +105,9 @@ export default () => {
     return () => {
       document.removeEventListener("keydown", action)
     }
-  }, [config, toggle, togglePin])
+  }, [config, toggle, togglePin, handleSaveToGallery, setIsGalleryOpen])
+
+  const isSaved = data ? galleryItems.some(item => item.url === data.url) : false;
 
   return (
     <div className="config">
@@ -188,6 +194,27 @@ export default () => {
           {!config.hideGui ? "hide" : "show"} gui
           {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
         </div>
+        
+        <div
+           className={"button" + (isSaved ? " active" : "")}
+           onClick={handleSaveToGallery}
+           disabled={config.incognito || !data || isSaved}
+           title={isSaved ? "Image is in Gallery" : "Save to Gallery (S)"}
+         >
+           {isSaved ? "Saved" : "Save"}
+           <FaSave size={16} />
+         </div>
+        
+        <div
+           className="button"
+           onClick={() => setIsGalleryOpen(true)}
+           disabled={config.incognito}
+           title="Open Gallery (O)"
+         >
+           Gallery
+           <FaImages size={16} />
+         </div>
+
         {/*<div
           className={"button" + (config.lockPosition ? " active" : "")}
           onClick={() => toggle("lockPosition")}
