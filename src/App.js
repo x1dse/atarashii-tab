@@ -85,7 +85,7 @@ export default () => {
 
       while (allPosts.length < 200) {
         const query = new URLSearchParams({
-          q: config.q,
+          q: `flair:"${config.q}"`,
           sort: config.sort,
           t: config.t,
           show: "all",
@@ -160,11 +160,24 @@ export default () => {
       title = ""
     }
 
-    let resolution = parts.find((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))
+    let resolution = parts.find((e) => {
+      const match = e.match(/[\d\s]+[xX×*][\d\s]+/g);
+      if (match) {
+        const matchedText = match[0];
+        return matchedText.length >= 4 && (matchedText.match(/\d/g) || []).length >= 2;
+      }
+      return false;
+    });
 
     if (resolution) {
       parts.splice(parts.indexOf(resolution), 1)
-      resolution = resolution.split(/[x×*]/).join(" × ")
+      resolution = resolution.split(/[xX×*]/).join(" × ")
+    } else {
+      const resolutionMatch = title.match(/(\d+)[xX×*](\d+)/);
+      if (resolutionMatch) {
+        resolution = `${resolutionMatch[1]} × ${resolutionMatch[2]}`;
+        title = title.replace(/(\d+)[xX×*](\d+)/, "").trim();
+      }
     }
 
     const processedTitle = title ? [title, ...parts].join(" • ") : parts.join(" • ")
@@ -235,7 +248,7 @@ export default () => {
                   <>
                     Image from{" "}
                     <a href={data?.isNsfw ? "https://reddit.com/r/AnimeWallpaperNSFW" : "https://reddit.com/r/Animewallpaper"}>
-                      {data?.isNsfw ? undefined : <FaReddit size={20} />}
+                      <FaReddit size={20} />
                       r/{data?.isNsfw ? "AnimeWallpaperNSFW" : "Animewallpaper"}
                     </a>
                   </>

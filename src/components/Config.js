@@ -127,10 +127,9 @@ export default () => {
       <ValuePicker
         valueKey="q"
         values={[
-          `All`,
-          `flair:"Desktop"`,
-          `flair:"Mobile"`,
-          `flair:"Wallpaper"`
+          "All",
+          "Desktop",
+          "Mobile",
         ]}
       />
 
