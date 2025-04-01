@@ -32,7 +32,7 @@ export default ({ src, ...props }) => {
       );
     };
     
-    xmlHTTP.timeout = 30000;
+    xmlHTTP.timeout = 60000;
     xmlHTTP.ontimeout = () => {
       console.warn("Timeout loading image:", src);
       NProgress.done();

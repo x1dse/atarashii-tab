@@ -53,7 +53,7 @@ const GalleryCard = ({ item, onUse, onRemove }) => {
 
          {item.url && !imageError && (
            <img
-             src={item.url}
+             src={item.preview ? item.preview : item.url}
              alt={item.title || 'Wallpaper'}
              loading="lazy"
              onLoadStart={handleImageLoadStart}

@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+$night-bg: #1a1a2e;
+$modal-bg: rgba(30, 30, 50, 0.95);
+$neon-accent: #00d4ff;
+$neon-secondary: #ff007a;
+$text-color: #e0e0e0;
+$shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(3px);
+    background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+    background-size: 50px 50px;
+
+    .modal-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .modal-content {
+        position: relative;
+        background: $modal-bg;
+        border-radius: 15px;
+        padding: 0;
+        width: 90%;
+        max-width: 1200px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: $shadow-glow, 0 0 20px rgba(0, 0, 0, 0.7);
+        color: $text-color;
+        font-family: 'Poppins', sans-serif;
+        animation: fadeIn 0.3s ease-in-out;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+        &::-webkit-scrollbar-track {
+            background: $night-bg;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: $neon-accent;
+            border-radius: 4px;
+            box-shadow: 0 0 5px $neon-accent;
+        }
+    }
+
+    .modal-close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: 2px solid $neon-accent;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $neon-accent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: rotate(90deg);
+            box-shadow: 0 0 10px $neon-accent;
+            color: $text-color;
+        }
+
+        svg {
+            font-size: 18px;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

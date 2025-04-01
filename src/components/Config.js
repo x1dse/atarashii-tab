@@ -108,12 +108,17 @@ export default () => {
   }, [config, toggle, togglePin, handleSaveToGallery, setIsGalleryOpen])
 
   const isSaved = data ? galleryItems.some(item => item.url === data.url) : false;
+  const rerollLabel = config.orderMode === 'sequential' ? 'next' : 'reroll';
+  const sorting =
+    config.source === "reddit"
+      ? ["relevance", "hot", "top", "new", "best", "rising"]
+      : ["date", "date_r", "rating", "views", "size", "tag_num"];
 
   return (
     <div className="config">
       <ValuePicker
         valueKey="sort"
-        values={["relevance", "hot", "top", "new", "best", "rising"]}
+        values={sorting}
       />
 
       {config.sort !== "new" && (
@@ -155,6 +160,7 @@ export default () => {
             setLoaded(false)
           }}
           disabled={config.incognito}
+          title="Toggle NSFW Filter (N)" 
         >
           nsfw
           <FaExclamationTriangle size={16} />
@@ -164,6 +170,7 @@ export default () => {
           className={"button" + (config.num !== null ? " active" : "")}
           onClick={() => togglePin()}
           disabled={config.incognito}
+          title="Toggle Pin Image (P)"
         >
           pin
           <FaThumbtack size={16} />
@@ -173,14 +180,16 @@ export default () => {
           className="button"
           onClick={() => setLoaded(false)}
           disabled={config.incognito || config.num !== null}
+          title={config.orderMode === 'sequential' ? 'Get Next Image (R)' : 'Reroll Image (R)'}
         >
-          reroll
+          {rerollLabel}
           <FaSync size={16} />
         </div>
 
         <div
           className={"button" + (config.incognito ? " active" : "")}
           onClick={() => toggle("incognito")}
+          title="Toggle Incognito Mode (I)"
         >
           incognito
           <FaUserSecret size={16} />
@@ -190,6 +199,7 @@ export default () => {
           className="button"
           id="btnHideGui"
           onClick={() => toggle("hideGui")}
+          title="Toggle Hide GUI (G)"
         >
           {!config.hideGui ? "hide" : "show"} gui
           {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
@@ -201,7 +211,7 @@ export default () => {
            disabled={config.incognito || !data || isSaved}
            title={isSaved ? "Image is in Gallery" : "Save to Gallery (S)"}
          >
-           {isSaved ? "Saved" : "Save"}
+           {isSaved ? "saved" : "save"}
            <FaSave size={16} />
          </div>
         
@@ -211,7 +221,7 @@ export default () => {
            disabled={config.incognito}
            title="Open Gallery (O)"
          >
-           Gallery
+           gallery
            <FaImages size={16} />
          </div>
 
