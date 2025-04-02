@@ -319,7 +319,7 @@ export default () => {
             <div className="credits to-right">
               <p>
                 Created with <FaHeart /> •{" "}
-                <a href="https://github.com/cf12/atarashii-tab">
+                <a href="https://github.com/x1dse/atarashii-tab">
                   v{pkg.version}
                 </a>
               </p>

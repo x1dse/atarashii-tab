@@ -2,16 +2,16 @@
   "name": "atarashii-tab",
   "version": "0.2.0",
   "description": "Displays anime wallpapers from r/Animewallpaper on your new tab page",
-  "homepage": "https://github.com/cf12/atarashii-tab#readme",
+  "homepage": "https://github.com/x1dse/atarashii-tab#readme",
   "bugs": {
-    "url": "https://github.com/cf12/atarashii-tab/issues"
+    "url": "https://github.com/x1dse/atarashii-tab/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cf12/atarashii-tab.git"
+    "url": "git+https://github.com/x1dse/atarashii-tab.git"
   },
   "license": "MIT",
-  "author": "CF12",
+  "author": "x1dse",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development webpack --watch",
