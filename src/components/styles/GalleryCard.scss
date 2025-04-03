@@ -1,15 +1,12 @@
-// Import the same font as the Gallery for consistency
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-// Reuse variables from Gallery for consistency
-$night-bg: #1a1a2e; // Deep navy blue
-$card-bg: #252540; // Slightly lighter for contrast
-$neon-accent: #00d4ff; // Cyan neon
-$neon-secondary: #ff007a; // Pink neon
-$text-color: #e0e0e0; // Light gray
+$night-bg: #1a1a2e;
+$card-bg: #252540;
+$neon-accent: #00d4ff;
+$neon-secondary: #ff007a;
+$text-color: #e0e0e0;
 $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
 
-// Gallery Card
 .gallery-card {
   background: $card-bg;
   border-radius: 10px;
@@ -32,17 +29,16 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 }
 
-// Image Wrapper
 .gallery-card-image-wrapper {
   position: relative;
   width: 100%;
-  height: 200px; // Fixed height for uniformity
+  height: 200px;
   overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; // Ensures images fill space without distortion
+    object-fit: cover;
     transition: filter 0.3s ease;
   }
 
@@ -76,13 +72,12 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
     padding: 10px;
 
     &.error {
-      background: #4a1a1a; // Dark red for error
-      color: #ff6666; // Light red text
+      background: #4a1a1a;
+      color: #ff6666;
     }
   }
 }
 
-// Card Content
 .gallery-card-content {
   padding: 10px;
   color: $text-color;
@@ -100,7 +95,7 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
 
   .card-res {
     font-size: 0.85rem;
-    color: #b0b0b0; // Slightly dimmer for secondary info
+    color: #b0b0b0;
     margin: 0 0 5px;
   }
 
@@ -121,12 +116,11 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 }
 
-// Card Actions
 .gallery-card-actions {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background: rgba(0, 0, 0, 0.3); // Slightly darker overlay for buttons
+  background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 
   button {
@@ -165,11 +159,10 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 }
 
-// Responsive Adjustments
 @media (max-width: 768px) {
   .gallery-card {
     .gallery-card-image-wrapper {
-      height: 150px; // Smaller images on mobile
+      height: 150px;
     }
 
     .card-title {
@@ -181,7 +174,7 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
       gap: 5px;
 
       button {
-        flex: 1 1 45%; // Buttons take half width on small screens
+        flex: 1 1 45%;
         font-size: 0.85rem;
         padding: 5px;
       }

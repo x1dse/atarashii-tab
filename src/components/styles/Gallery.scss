@@ -1,34 +1,30 @@
-// Import a Google Font for a modern look
+@use "sass:color";
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-// Variables for the night theme
-$night-bg: #1a1a2e; // Deep navy blue
-$modal-bg: rgba(30, 30, 50, 0.95); // Semi-transparent dark purple
-$neon-accent: #00d4ff; // Cyan neon
-$neon-secondary: #ff007a; // Pink neon
-$text-color: #e0e0e0; // Light gray for readability
+$night-bg: #1a1a2e;
+$modal-bg: rgba(30, 30, 50, 0.95);
+$neon-accent: #00d4ff;
+$neon-secondary: #ff007a;
+$text-color: #e0e0e0;
 $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
 
-// Gallery overlay (backdrop)
 .gallery-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8); // Dark overlay with transparency
-  backdrop-filter: blur(3px); // Subtle blur effect
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-
-  // Subtle starry background (optional: replace with an image if preferred)
   background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
   background-size: 50px 50px;
 }
 
-// Gallery modal
 .gallery-modal {
   background: $modal-bg;
   border-radius: 15px;
@@ -41,13 +37,14 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   position: relative;
   animation: fadeIn 0.3s ease-in-out;
 
-  // Custom scrollbar for night theme
   &::-webkit-scrollbar {
     width: 8px;
   }
+
   &::-webkit-scrollbar-track {
     background: $night-bg;
   }
+
   &::-webkit-scrollbar-thumb {
     background: $neon-accent;
     border-radius: 4px;
@@ -55,7 +52,6 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 }
 
-// Close button
 .gallery-close-btn {
   position: absolute;
   top: 10px;
@@ -83,7 +79,6 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 }
 
-// Gallery title
 .gallery-title {
   font-family: 'Poppins', sans-serif;
   font-size: 2rem;
@@ -94,7 +89,81 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   text-shadow: 0 0 5px $neon-accent, 0 0 10px $neon-secondary;
 }
 
-// Empty state
+.gallery-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 20px;
+  border-bottom: 1px solid rgba($neon-accent, 0.3);
+  margin-bottom: 20px;
+}
+
+.gallery-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.gallery-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.gallery-filter-btn,
+.gallery-action-btn {
+  font-family: 'Poppins', sans-serif;
+  padding: 8px 15px;
+  border: 1px solid $neon-secondary;
+  background-color: transparent;
+  color: $text-color;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  svg {
+    font-size: 1.1em;
+  }
+
+  &:hover {
+    background-color: rgba($neon-secondary, 0.2);
+    box-shadow: 0 0 8px rgba($neon-secondary, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.gallery-filter-btn.active {
+  background-color: $neon-accent;
+  border-color: $neon-accent;
+  color: $night-bg;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba($neon-accent, 0.7);
+
+  &:hover {
+    background-color: color.adjust($neon-accent, $lightness: -10%);
+  }
+}
+
+.gallery-action-btn {
+  border-color: $neon-accent;
+
+  &:hover {
+    background-color: rgba($neon-accent, 0.2);
+    box-shadow: 0 0 8px rgba($neon-accent, 0.5);
+  }
+}
+
 .gallery-empty {
   font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
@@ -104,25 +173,23 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
-// Gallery grid
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
   padding: 10px;
 
-  // Optional: Add a fade-in animation for items
   & > * {
     animation: slideUp 0.5s ease-in-out;
   }
 }
 
-// Animations
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -134,6 +201,7 @@ $shadow-glow: 0 0 10px rgba(0, 212, 255, 0.5);
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

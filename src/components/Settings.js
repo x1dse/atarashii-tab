@@ -6,7 +6,7 @@ import {
     FaCog, FaPalette, FaCloudDownloadAlt, FaFilter,
     FaTrash, FaSync, FaImage, FaCheck, FaChevronDown
 } from 'react-icons/fa';
-
+import { toast } from 'react-toastify';
 import './styles/Settings.scss';
 
 const ORDER_RANDOM = 'random';
@@ -35,14 +35,14 @@ const Settings = () => {
     const handleClearCache = () => {
         if (window.confirm("Are you sure you want to clear the image cache?")) {
             setCache({ lastUpdated: -1, data: [] });
-            alert('Image cache cleared!');
+            toast.info("Image cache cleared!");
         }
     };
 
     const handleClearGallery = () => {
         if (window.confirm("Are you sure you want to clear the saved gallery?")) {
             setGalleryItems([]);
-            alert('Saved gallery cleared!');
+            toast.info("Saved gallery cleared!");
         }
     };
 

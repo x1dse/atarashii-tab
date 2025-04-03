@@ -4,7 +4,7 @@ import { GiFoxHead } from "react-icons/gi";
 import { PuffLoader } from "react-spinners"
 
 import useLocalStorage from "./hooks/useLocalStorage"
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import TimeDate from "./components/TimeDate"
 import Config from "./components/Config"
 import Icons from "./components/Icons"
@@ -100,6 +100,46 @@ export default () => {
   const getGalleryItem = useCallback((itemId) => {
     return galleryItems.find(item => item?.id === itemId) ?? null;
   }, [galleryItems]);
+
+  const handleImportGallery = useCallback((impItems) => {
+    if (!Array.isArray(impItems)) {
+      console.error("[!] Import failed: Invalid file format. Expected an array.");
+      toast.error("Import failed: The file does not contain a valid gallery array.");
+      return;
+    }
+
+    setGalleryItems(items => {
+      const urls = new Set(items.map(item => item.url));
+      let added = 0;
+      let skipped = 0;
+      
+      const newItems = impItems.filter(item => {
+        if (!item || typeof item.url !== 'string' || !item.url) {
+          skipped++;
+          return false;
+        }
+        
+        if (urls.has(item.url)) {
+          skipped++;
+          return false;
+        }
+        
+        added++;
+        return true;
+      });
+      
+      if (newItems.length > 0) {
+        console.log(`[+] Added ${newItems.length} new items to gallery.`);
+        toast.success(`Import successful!\nAdded: ${newItems.length}\nSkipped (duplicates or invalid): ${skipped}`);
+        return [...items, ...newItems];
+      } else {
+        console.log("[i] No new items were added from the import file.");
+        toast.info(`Import finished. No new items added. Skipped: ${skippedCount}`);
+        return items;
+      }
+    });
+
+  }, []);
 
   useEffect(() => {
     if (!loaded) return;
@@ -245,6 +285,7 @@ export default () => {
         handleSaveToGallery,
         handleRemoveFromGallery,
         handleUseFromGallery,
+        handleImportGallery
       }}
     >
       <div
