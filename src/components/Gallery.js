@@ -130,7 +130,7 @@ const Gallery = ({ isOpen, onClose }) => {
           <div className="gallery-grid">
             {filteredItems.map((item) => (
               <GalleryCard
-                key={item.id}
+                key={item.url}
                 item={item}
                 onUse={handleUseFromGallery}
                 onRemove={() => handleRemoveFromGallery(item.url)}

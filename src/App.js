@@ -230,7 +230,7 @@ export default () => {
         url: info.url,
         link: data.link,
         num,
-        isNsfw: data.isNsfw,
+        isNsfw: info.isNsfw,
         source: data.source,
         preview: info.preview === null ? undefined : info.preview,
       })
